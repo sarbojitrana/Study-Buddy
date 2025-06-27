@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StudyBuddy | Dashboard</title>
+    <link rel="stylesheet" href="/styles/dashboard.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome, <%= user.username %></h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/auth/logout">Logout</a>
+        </nav>
+    </header>
+    <main>
+    <section class="profile">
+        <h2>Your Profile</h2>
+        <p><strong>Email:</strong> <%= user.email %></p>
+    </section>
+
+    <section class="tasks">
+        <h2>Your Tasks</h2>
+        <form method="POST" action="/tasks/create">
+            <input type="text" name="title" placeholder="Task title" required />
+            <input type="datetime-local" name="scheduledFor" required />
+            <textarea name="description" placeholder="Optional description"></textarea>
+            <button type="submit">Add Task</button>
+        </form>
+
+        <ul>
+            <% tasks.forEach(task => { %>
+                <li style="color:
+                    <%= task.status === 'completed' ? 'green' :
+                        task.status === 'missed' ? 'red' : 'orange' %>">
+                    <strong><%= task.title %></strong> — <%= task.scheduledFor.toLocaleString() %>
+                    <% if (task.description) { %>
+                        <p><%= task.description %></p>
+                    <% } %>
+                    <form method="POST" action="/tasks/<%= task._id %>/status">
+                        <select name="status" onchange="this.form.submit()">
+                            <option <%= task.status === 'pending' ? 'selected' : '' %>>pending</option>
+                            <option <%= task.status === 'completed' ? 'selected' : '' %>>completed</option>
+                            <option <%= task.status === 'missed' ? 'selected' : '' %>>missed</option>
+                        </select>
+                    </form>
+                    <form method="POST" action="/tasks/<%= task._id %>/delete" style="display:inline;">
+                        <button type="submit">🗑️</button>
+                    </form>
+                </li>
+            <% }) %>
+        </ul>
+    </section>
+
+    <section class="placeholder">
+        <h2>Upcoming Features</h2>
+        <ul>
+            <li>📘 Create Study Groups</li>
+            <li>📅 Track Study Goals</li>
+            <li>📝 Share Notes</li>
+            <li>🔐 Private Messaging</li>
+        </ul>
+    </section>
+</main>
+
+
+    <footer>
+        <p>&copy; 2025 StudyBuddy Inc.</p>
+    </footer>
+</body>
+</html>
