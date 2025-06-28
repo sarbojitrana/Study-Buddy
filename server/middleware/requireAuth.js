@@ -1,22 +1,27 @@
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv');
-dotenv.config();
+const User = require('../models/User');
 
-const requireAuth = (req, res, next) => {
+module.exports = async function (req, res, next) {
     const token = req.cookies.token;
 
     if (!token) {
-        return res.redirect('/login');
+        return res.redirect('/auth/login');
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+
+        const user = await User.findById(decoded.id).lean();
+
+        if (!user) {
+            return res.redirect('/auth/login');
+        }
+
+        req.user = user; // 🔥 Attach full user (with username/email) here
         next();
     } catch (err) {
-        console.error('JWT verification failed:', err);
-        res.redirect('/login');
+        console.error('Auth Error:', err);
+        res.clearCookie('token');
+        return res.redirect('/auth/login');
     }
 };
-
-module.exports = requireAuth;

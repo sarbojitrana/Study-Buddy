@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks for November 15, 2024 | StudyBuddy</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --warning-gradient: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #ffa726 100%);
+            --pending-gradient: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.37);
+            --shadow-medium: 0 15px 35px rgba(31, 38, 135, 0.2);
+            --shadow-heavy: 0 25px 50px rgba(31, 38, 135, 0.3);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-light: #718096;
+            --border-radius: 20px;
+            --border-radius-small: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 80px;
+            height: 80px;
+            top: 40%;
+            left: 75%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            animation: slideDown 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .date-icon {
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+            background: var(--secondary-gradient);
+            padding: 1rem;
+            border-radius: 50%;
+            box-shadow: var(--shadow-medium);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius-small);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .task-list {
+            display: grid;
+            gap: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.6;
+        }
+
+        .empty-state h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .task {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: scaleIn 0.5s ease-out both;
+            animation-delay: calc(var(--index, 0) * 100ms);
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .task:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .task::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+            transition: var(--transition);
+        }
+
+        .task.completed::before {
+            background: var(--success-gradient);
+        }
+
+        .task.pending::before {
+            background: var(--pending-gradient);
+        }
+
+        .task.missed::before {
+            background: var(--danger-gradient);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+
+        .task-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            flex: 1;
+        }
+
+        .task-time {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-small);
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .task-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .task-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius-small);
+            font-weight: 500;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .task.completed .task-status {
+            background: var(--success-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .task.pending .task-status {
+            background: var(--pending-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 234, 167, 0.3);
+        }
+
+        .task.missed .task-status {
+            background: var(--danger-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .task-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn.primary {
+            background: var(--primary-gradient);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .task-priority {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--warning-gradient);
+            box-shadow: 0 0 10px rgba(255, 154, 158, 0.5);
+        }
+
+        .task-priority.high {
+            background: var(--danger-gradient);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.5);
+        }
+
+        .task-priority.low {
+            background: var(--success-gradient);
+            box-shadow: 0 0 10px rgba(79, 172, 254, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header {
+                padding: 1.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .task {
+                padding: 1.5rem;
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .task-title {
+                font-size: 1.2rem;
+            }
+
+            .task-actions {
+                justify-content: center;
+            }
+        }
+
+        .status-icon {
+            margin-right: 0.5rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success-gradient);
+            transition: width 1s ease-out;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <div class="header-title">
+                    <div class="date-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <h1>Tasks for November 15, 2024</h1>
+                </div>
+                <nav class="nav-links">
+                    <a href="/tasks/calendar">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Calendar
+                    </a>
+                    <a href="/dashboard">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="task-list" id="taskList">
+            <!-- Sample tasks - replace with your EJS template logic -->
+            <div class="task completed" style="--index: 0">
+                <div class="task-priority low"></div>
+                <div class="task-header">
+                    <div class="task-title">Complete Mathematics Assignment</div>
+                    <div class="task-time">
+                        <i class="fas fa-clock"></i>
+                        09:00 AM
+                    </div>
+                </div>
+                <div class="task-desc">
+                    Review chapters 5-7 and complete the practice problems. Focus on quadratic equations and graphing techniques.
+                </div>
+                <div class="task-status">
+                    <i class="fas fa-check-circle status-icon"></i>
+                    Completed
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 100%"></div>
+                </div>
+                <div class="task-actions">
+                    <a href="#" class="btn">
+                        <i class="fas fa-eye"></i>
+                        View Details
+                    </a>
+                    <a href="#" class="btn">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </a>
+                </div>
+            </div>
+
+            <div class="task pending" style="--index: 1">
+                <div class="task-priority high"></div>
+                <div class="task-header">
+                    <div class="task-title">Study for Physics Exam</div>
+                    <div class="task-time">
+                        <i class="fas fa-clock"></i>
+                        02:30 PM
+                    </div>
+                </div>
+                <div class="task-desc">
+                    Prepare for the upcoming physics exam covering thermodynamics and wave mechanics. Review lecture notes and practice problems.
+                </div>
+                <div class="task-status">
+                    <i class="fas fa-hourglass-half status-icon"></i>
+                    Pending
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 60%"></div>
+                </div>
+                <div class="task-actions">
+                    <a href="#" class="btn primary">
+                        <i class="fas fa-play"></i>
+                        Start Task
+                    </a>
+                    <a href="#" class="btn">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </a>
+                </div>
+            </div>
+
+            <div class="task missed" style="--index: 2">
+                <div class="task-priority"></div>
+                <div class="task-header">
+                    <div class="task-title">Submit Literature Essay</div>
+                    <div class="task-time">
+                        <i class="fas fa-clock"></i>
+                        11:59 PM
+                    </div>
+                </div>
+                <div class="task-desc">
+                    Write and submit the essay on Shakespeare's Hamlet. Analysis should focus on character development and themes.
+                </div>
+                <div class="task-status">
+                    <i class="fas fa-times-circle status-icon"></i>
+                    Missed
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 25%"></div>
+                </div>
+                <div class="task-actions">
+                    <a href="#" class="btn">
+                        <i class="fas fa-redo"></i>
+                        Reschedule
+                    </a>
+                    <a href="#" class="btn">
+                        <i class="fas fa-edit"></i>
+                        Edit
+                    </a>
+                </div>
+            </div>
+
+            <!-- Empty state example (hidden by default) -->
+            <div class="empty-state" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-times"></i>
+                </div>
+                <h2>No Tasks Scheduled</h2>
+                <p>You have no tasks scheduled for this day. Enjoy your free time!</p>
+                <div style="margin-top: 2rem;">
+                    <a href="#" class="btn primary">
+                        <i class="fas fa-plus"></i>
+                        Add New Task
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Add smooth animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const tasks = document.querySelectorAll('.task');
+            
+            tasks.forEach((task, index) => {
+                task.style.setProperty('--index', index);
+            });
+
+            // Animate progress bars
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const width = bar.style.width;
+                    bar.style.width = '0%';
+                    setTimeout(() => {
+                        bar.style.width = width;
+                    }, 500);
+                });
+            }, 800);
+        });
+
+        // Add interactive hover effects
+        document.querySelectorAll('.task').forEach(task => {
+            task.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            task.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

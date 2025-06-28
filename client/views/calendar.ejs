@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyBuddy | Calendar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #2d3748;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            padding: 12px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .month-navigation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .month-title {
+            font-size: 32px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 300px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .calendar-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 15px;
+            max-width: 100%;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            color: #718096;
+            padding: 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+            font-size: 16px;
+            background: #f7fafc;
+            border: 2px solid transparent;
+        }
+
+        .day:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .day.empty {
+            cursor: default;
+            background: transparent;
+        }
+
+        .day.empty:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: transparent;
+        }
+
+        .day.green {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+            color: white;
+            box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+        }
+
+        .day.yellow {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+            color: white;
+            box-shadow: 0 10px 25px rgba(237, 137, 54, 0.3);
+        }
+
+        .day.red {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+            color: white;
+            box-shadow: 0 10px 25px rgba(245, 101, 101, 0.3);
+        }
+
+        .day a {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+
+        .floating-shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 50%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .legend-color.completed {
+            background: linear-gradient(135deg, #48bb78, #38a169);
+        }
+
+        .legend-color.pending {
+            background: linear-gradient(135deg, #ed8936, #dd6b20);
+        }
+
+        .legend-color.missed {
+            background: linear-gradient(135deg, #f56565, #e53e3e);
+        }
+
+        .legend-color.free {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .nav-links {
+                justify-content: center;
+            }
+
+            .month-navigation {
+                gap: 15px;
+            }
+
+            .month-title {
+                font-size: 24px;
+                min-width: auto;
+            }
+
+            .calendar-grid {
+                gap: 10px;
+            }
+
+            .day {
+                font-size: 14px;
+            }
+
+            .legend {
+                gap: 15px;
+            }
+
+            .legend-item {
+                font-size: 12px;
+            }
+        }
+
+        /* Add subtle pulse animation for today */
+        .day.today {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                box-shadow: 0 15px 35px rgba(102, 126, 234, 0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+        <div class="floating-shape"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h1>StudyBuddy</h1>
+                </div>
+                <nav class="nav-links">
+                    <a href="/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+                    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </nav>
+            </div>
+            
+            <div class="month-navigation">
+                <button class="nav-btn" onclick="previousMonth()">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <h2 class="month-title" id="monthTitle">November 2024</h2>
+                <button class="nav-btn" onclick="nextMonth()">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </header>
+
+        <main class="calendar-container">
+            <div class="calendar-grid" id="calendarGrid">
+                <!-- Day headers -->
+                <div class="day-header">Sun</div>
+                <div class="day-header">Mon</div>
+                <div class="day-header">Tue</div>
+                <div class="day-header">Wed</div>
+                <div class="day-header">Thu</div>
+                <div class="day-header">Fri</div>
+                <div class="day-header">Sat</div>
+                
+                <!-- Calendar days will be generated by JavaScript -->
+            </div>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color completed"></div>
+                    <span>Completed Tasks</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color pending"></div>
+                    <span>Pending Tasks</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color missed"></div>
+                    <span>Missed Tasks</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color free"></div>
+                    <span>Free Day</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Sample data - replace with your actual data
+        let currentDate = new Date();
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        // Sample tasks data
+        const sampleTasks = {
+            '2024-11-05': [{ status: 'completed' }],
+            '2024-11-12': [{ status: 'pending' }],
+            '2024-11-18': [{ status: 'missed' }],
+            '2024-11-25': [{ status: 'completed' }, { status: 'completed' }],
+            '2024-11-28': [{ status: 'pending' }, { status: 'missed' }]
+        };
+
+        function generateCalendar(month, year) {
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startDay = firstDay.getDay();
+            
+            const monthNames = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            
+            document.getElementById('monthTitle').textContent = `${monthNames[month]} ${year}`;
+            
+            const calendarGrid = document.getElementById('calendarGrid');
+            // Clear existing days (keep headers)
+            const headers = calendarGrid.querySelectorAll('.day-header');
+            calendarGrid.innerHTML = '';
+            headers.forEach(header => calendarGrid.appendChild(header));
+            
+            // Add empty cells for days before the first day of the month
+            for (let i = 0; i < startDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day empty';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of the month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Check if this day has tasks
+                const dayTasks = sampleTasks[dateStr] || [];
+                const hasTasks = dayTasks.length > 0;
+                const missed = dayTasks.some(t => t.status === 'missed');
+                const completed = hasTasks && dayTasks.every(t => t.status === 'completed');
+                
+                let dayColor = '';
+                if (missed) dayColor = 'red';
+                else if (completed) dayColor = 'green';
+                else if (hasTasks) dayColor = 'yellow';
+                
+                // Check if it's today
+                const today = new Date();
+                const isToday = day === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                
+                dayElement.className = `day ${dayColor} ${isToday ? 'today' : ''}`;
+                
+                const link = document.createElement('a');
+                link.href = `/tasks/day/${dateStr}`;
+                link.textContent = day;
+                
+                dayElement.appendChild(link);
+                calendarGrid.appendChild(dayElement);
+                
+                // Add stagger animation
+                dayElement.style.animationDelay = `${(day * 20)}ms`;
+                dayElement.style.animation = 'fadeInUp 0.5s ease-out both';
+            }
+        }
+
+        function previousMonth() {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        function nextMonth() {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        // Initialize calendar
+        generateCalendar(currentMonth, currentYear);
+    </script>
+</body>
+</html>
