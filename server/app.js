@@ -6,27 +6,31 @@ const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const requireAuth = require('./middleware/requireAuth');
 const methodOverride = require('method-override');
-const serverless = require('serverless-http'); // ✅ this line is the key
+const serverless = require('serverless-http');
+const path = require('path');
 
 dotenv.config();
 
 const app = express();
 
-// Debug
+// Debug logs
 app.use((req, res, next) => {
     console.log(`[DEBUG] ${req.method} ${req.originalUrl}`);
     next();
 });
 
-app.use('/styles', express.static('client/styles'));
+// ✅ Absolute paths using __dirname
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '../client/views'));
+
+app.use('/styles', express.static(path.join(__dirname, '../client/styles')));
+app.use(express.static(path.join(__dirname, '../client/public')));
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(methodOverride('_method'));
-
-app.set('view engine', 'ejs');
-app.set('views', 'client/views');
-app.use(express.static('client/public'));
 
 // Routes
 app.use('/auth', authRoutes);
@@ -34,6 +38,7 @@ app.use('/tasks', taskRoutes);
 app.get('/', (req, res) => res.render('home'));
 app.get('/dashboard', requireAuth, (req, res) => res.redirect('/tasks'));
 
+// Error handling
 app.use((err, req, res, next) => {
     console.error('Error:', err);
     res.status(500).render('error', {
@@ -62,6 +67,6 @@ if (process.env.VERCEL !== "1") {
         });
 }
 
-module.exports = serverless(app);
-
-
+// ✅ Required for Vercel serverless deployment
+module.exports = app;
+module.exports.handler = serverless(app);
