@@ -429,7 +429,7 @@
                 </div>
                 <div class="profile-info">
                     <p><strong>Email:</strong> <%= user.email %></p>
-                    <p><strong>Member since:</strong> <%= new Date().toLocaleDateString() %></p>
+                    <p><strong>Member since:</strong> <%= new Date(user.createdAt).toLocaleDateString() %></p>
                     <p><strong>Tasks completed:</strong> <%= tasks.filter(t => t.status === 'completed').length %></p>
                 </div>
             </section>
@@ -439,7 +439,7 @@
                 
                 <div class="task-form">
                     <h3>Add New Task</h3>
-                    <form method="POST" action="/tasks/create">
+                        <form method="POST" action="/tasks/create">
                         <div class="form-group">
                             <input type="text" name="title" placeholder="What do you need to study?" required />
                         </div>
@@ -464,33 +464,55 @@
                             <div class="task-item <%= task.status %>">
                                 <div class="task-header">
                                     <div>
-                                        <div class="task-title"><%= task.title %></div>
-                                        <div class="task-date">📅 <%= task.scheduledFor.toLocaleString() %></div>
+                                        <div class="task-title" id="title-<%= task._id %>"><%= task.title %></div>
+                                        <div class="task-date" id="date-<%= task._id %>">📅 <%= task.scheduledFor.toLocaleString() %></div>
                                     </div>
                                     <span class="status-<%= task.status %>">
                                         <%= task.status === 'completed' ? '✅' : 
                                             task.status === 'missed' ? '❌' : '⏳' %>
                                     </span>
                                 </div>
-                                <% if (task.description) { %>
-                                    <div class="task-description"><%= task.description %></div>
-                                <% } %>
+                            
+                                <div class="task-description"><%= task.description %></div>
+                            
+                                <!-- 📝 Edit Form (Hidden by default) -->
+                                <form method="POST" action="/tasks/<%= task._id %>?_method=PUT" class="edit-form" id="edit-form-<%= task._id %>" style="display:none; margin-bottom: 15px;">
+                                    <input type="text" name="title" value="<%= task.title %>" placeholder="Title" class="form-group" required style="width:100%; margin-bottom: 8px; padding: 10px; border-radius: 8px;">
+                                    <input type="datetime-local" name="scheduledFor" value="<%= task.scheduledFor.toISOString().slice(0,16) %>" class="form-group" required style="width:100%; margin-bottom: 8px; padding: 10px; border-radius: 8px;">
+                                    <textarea name="description" placeholder="Description" class="form-group" style="width:100%; padding: 10px; border-radius: 8px;"><%= task.description %></textarea>
+                                    <button type="submit" class="submit-btn" style="margin-top: 10px;">💾 Save</button>
+                                </form>
+                            
+                                <!-- Edit + Delete Buttons -->
                                 <div class="task-actions">
-                                    <form method="POST" action="/tasks/<%= task._id %>/status">
-                                        <select name="status" class="status-select" onchange="this.form.submit()">
-                                            <option <%= task.status === 'pending' ? 'selected' : '' %>>pending</option>
-                                            <option <%= task.status === 'completed' ? 'selected' : '' %>>completed</option>
-                                            <option <%= task.status === 'missed' ? 'selected' : '' %>>missed</option>
-                                        </select>
-                                    </form>
-                                    <form method="POST" action="/tasks/<%= task._id %>/delete" style="display:inline;">
+                                    <% if (task.status !== 'completed') { %>
+                                        <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" style="display:inline;">
+                                            <input type="hidden" name="title" value="<%= task.title %>">
+                                            <input type="hidden" name="description" value="<%= task.description %>">
+                                            <input type="hidden" name="scheduledFor" value="<%= task.scheduledFor.toISOString() %>">
+                                            <input type="hidden" name="status" value="completed">
+                                            <input type="hidden" name="redirectTo" value="/dashboard">
+                                            <button type="submit" class="delete-btn" title="Mark as Completed" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">
+                                                ✅
+                                            </button>
+                                        </form>
+                                        
+                                    <% } %>
+                                    
+                                    
+        
+                                    <form method="POST" action="/tasks/<%= task._id %>" style="display:inline;">
+                                        <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="delete-btn">🗑️</button>
                                     </form>
-                                </div>
+                                
+                                    <button class="delete-btn" style="background: linear-gradient(135deg, #a1c4fd, #c2e9fb);" onclick="toggleEditForm('<%= task._id %>')">✏️</button>
+                                </div>  
                             </div>
                         <% }) %>
                     <% } %>
                 </div>
+
             </section>
 
             <section class="card features">
@@ -548,6 +570,21 @@
                 });
             });
         });
+        function toggleEditForm(taskId) {
+            const form = document.getElementById(`edit-form-${taskId}`);
+            const title = document.getElementById(`title-${taskId}`);
+            const date = document.getElementById(`date-${taskId}`);
+
+            if (form.style.display === "none") {
+                form.style.display = "block";
+                title.style.display = "none";
+                date.style.display = "none";
+            } else {
+                form.style.display = "none";
+                title.style.display = "block";
+                date.style.display = "block";
+            }
+        };
     </script>
 </body>
 </html>

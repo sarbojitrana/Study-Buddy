@@ -128,6 +128,17 @@
             box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
         }
 
+        .btn-dashboard {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+        }
+
+        .btn-dashboard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 222, 128, 0.6);
+        }
+
         /* Hero Section */
         .hero {
             text-align: center;
@@ -347,44 +358,42 @@
         <!-- Header -->
         <header>
             <nav>
-                <a href="#" class="logo">StudyBuddy</a>
+                <a href="/" class="logo">StudyBuddy</a>
                 <div class="auth-links">
-                    <a href="/login" class="btn btn-secondary">Login</a>
-                    <a href="/register" class="btn btn-primary">Get Started</a>
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <a href="/dashboard" class="btn btn-dashboard">📊 Dashboard</a>
+                        <a href="/auth/logout" class="btn btn-secondary">👋 Logout</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="btn btn-secondary">Login</a>
+                        <a href="/auth/register" class="btn btn-primary">Get Started</a>
+                    <% } %>
                 </div>
             </nav>
         </header>
 
         <!-- Hero Section -->
         <section class="hero">
-            <h1>Welcome to StudyBuddy</h1>
-            <p>Transform your study sessions with personalized smart scheduling, and collaborative learning tools designed for modern students.</p>
-            
-            <div class="cta-buttons">
-                <a href="/register" class="btn btn-primary btn-cta">Start Learning Free</a>
-                <a href="#features" class="btn btn-secondary btn-cta">Explore Features</a>
-            </div>
-
-            <!-- Stats -->
-            <!-- <div class="stats">
-                <div class="stat">
-                    <span class="stat-number">50K+</span>
-                    <div class="stat-label">Active Students</div>
+            <% if (typeof user !== 'undefined' && user) { %>
+                <h1>Welcome back, <%= user.username %>!</h1>
+                <p>Ready to continue your learning journey? Your personalized dashboard is waiting with all your study progress and upcoming tasks.</p>
+                
+                <div class="cta-buttons">
+                    <a href="/dashboard" class="btn btn-dashboard btn-cta">Go to Dashboard</a>
+                    <a href="#features" class="btn btn-secondary btn-cta">Explore Features</a>
                 </div>
-                <div class="stat">
-                    <span class="stat-number">95%</span>
-                    <div class="stat-label">Success Rate</div>
+            <% } else { %>
+                <h1>Welcome to StudyBuddy</h1>
+                <p>Transform your study sessions with personalized smart scheduling, and collaborative learning tools designed for modern students.</p>
+                
+                <div class="cta-buttons">
+                    <a href="/auth/register" class="btn btn-primary btn-cta">Start Learning Free</a>
+                    <a href="#features" class="btn btn-secondary btn-cta">Explore Features</a>
                 </div>
-                <div class="stat">
-                    <span class="stat-number">24/7</span>
-                    <div class="stat-label">AI Support</div>
-                </div>
-            </div> -->
+            <% } %>
         </section>
 
         <!-- Features Section -->
         <section id="features" class="features">
-
             <div class="feature-card">
                 <span class="feature-icon">📅</span>
                 <h3>Smart Scheduling</h3>
@@ -408,7 +417,6 @@
                 <h3>Goal Setting</h3>
                 <p>Set and achieve your academic goals with milestone tracking, deadline management, and personalized motivation systems.</p>
             </div>
-
         </section>
     </div>
 
@@ -476,50 +484,6 @@
                 element.style.transform = `translateY(${yPos}px)`;
             });
         });
-
-        // Counter animation for stats
-        function animateCounters() {
-            const counters = document.querySelectorAll('.stat-number');
-            
-            counters.forEach(counter => {
-                const target = counter.textContent;
-                const isPercentage = target.includes('%');
-                const isPlus = target.includes('+');
-                const isSlash = target.includes('/');
-                
-                if (isSlash) return; // Skip 24/7
-                
-                let finalNumber = parseInt(target.replace(/[^\d]/g, ''));
-                let current = 0;
-                const increment = finalNumber / 100;
-                
-                const timer = setInterval(() => {
-                    current += increment;
-                    if (current >= finalNumber) {
-                        current = finalNumber;
-                        clearInterval(timer);
-                    }
-                    
-                    let display = Math.floor(current);
-                    if (isPercentage) display += '%';
-                    if (isPlus) display += 'K+';
-                    
-                    counter.textContent = display;
-                }, 20);
-            });
-        }
-
-        // Trigger counter animation when stats come into view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounters();
-                    observer.unobserve(entry.target);
-                }
-            });
-        });
-
-        observer.observe(document.querySelector('.stats'));
     </script>
 </body>
 </html>

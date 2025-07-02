@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -85,9 +86,12 @@
         }
 
         @keyframes float {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0px) rotate(0deg);
             }
+
             50% {
                 transform: translateY(-20px) rotate(180deg);
             }
@@ -117,6 +121,7 @@
                 opacity: 0;
                 transform: translateY(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -138,9 +143,11 @@
             0% {
                 left: -100%;
             }
+
             50% {
                 left: 100%;
             }
+
             100% {
                 left: 100%;
             }
@@ -217,6 +224,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -270,6 +278,7 @@
                 opacity: 0;
                 transform: scale(0.9);
             }
+
             to {
                 opacity: 1;
                 transform: scale(1);
@@ -470,23 +479,9 @@
             margin-right: 0.5rem;
         }
 
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success-gradient);
-            transition: width 1s ease-out;
-            border-radius: 2px;
-        }
     </style>
 </head>
+
 <body>
     <div class="floating-elements">
         <div class="floating-shape"></div>
@@ -501,7 +496,8 @@
                     <div class="date-icon">
                         <i class="fas fa-calendar-day"></i>
                     </div>
-                    <h1>Tasks for November 15, 2024</h1>
+                    <h1>Tasks for <%= new Date(date).toDateString() %></h1>
+
                 </div>
                 <nav class="nav-links">
                     <a href="/tasks/calendar">
@@ -517,149 +513,142 @@
         </header>
 
         <main class="task-list" id="taskList">
-            <!-- Sample tasks - replace with your EJS template logic -->
-            <div class="task completed" style="--index: 0">
-                <div class="task-priority low"></div>
-                <div class="task-header">
-                    <div class="task-title">Complete Mathematics Assignment</div>
-                    <div class="task-time">
-                        <i class="fas fa-clock"></i>
-                        09:00 AM
+            <% if (tasks.length===0) { %>
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h2>No Tasks Scheduled</h2>
+                    <p>You have no tasks scheduled for this day. Enjoy your free time!</p>
+                    <div style="margin-top: 2rem;">
+                        <a href="/tasks/new" class="btn primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Task
+                        </a>
                     </div>
                 </div>
-                <div class="task-desc">
-                    Review chapters 5-7 and complete the practice problems. Focus on quadratic equations and graphing techniques.
-                </div>
-                <div class="task-status">
-                    <i class="fas fa-check-circle status-icon"></i>
-                    Completed
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 100%"></div>
-                </div>
-                <div class="task-actions">
-                    <a href="#" class="btn">
-                        <i class="fas fa-eye"></i>
-                        View Details
-                    </a>
-                    <a href="#" class="btn">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </a>
-                </div>
-            </div>
+                <% } else { %>
+                    <% tasks.forEach((task, index)=> { %>
+                        <div class="task <%= task.status %>" style="--index: <%= index %>">
+                            <div class="task-priority <%= task.priority || 'medium' %>"></div>
+                            <div class="task-header">
+                                <div class="task-title">
+                                    <%= task.title %>
+                                </div>
+                                <div class="task-time">
+                                    <i class="fas fa-clock"></i>
+                                    <%= new Date(task.scheduledFor).toLocaleTimeString('en-IN', { hour: '2-digit' ,
+                                        minute: '2-digit' }) %>
+                                </div>
+                            </div>
+                            <div class="task-desc">
+                                <%= task.description %>
+                            </div>
+                            <div class="task-status">
+                                <% if (task.status==='completed' ) { %>
+                                    <i class="fas fa-check-circle status-icon"></i>
+                                    <% } else if (task.status==='pending' ) { %>
+                                        <i class="fas fa-hourglass-half status-icon"></i>
+                                        <% } else { %>
+                                            <i class="fas fa-times-circle status-icon"></i>
+                                            <% } %>
+                                                <%= task.status.charAt(0).toUpperCase() + task.status.slice(1) %>
+                            </div>
+                            <div class="task-actions">
+                                <% if (task.status !== 'completed') { %>
+                                    <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" style="display:inline;">
+                                        <input type="hidden" name="title" value="<%= task.title %>">
+                                        <input type="hidden" name="description" value="<%= task.description %>">
+                                        <input type="hidden" name="scheduledFor" value="<%= task.scheduledFor.toISOString() %>">
+                                        <input type="hidden" name="status" value="completed">
+                                        <input type="hidden" name="redirectTo" value="/tasks/day/<%= date %>">
+                                        <button type="submit" class="btn">
+                                            Mark as Completed
+                                        </button>
+                                    </form>
+                                <% } %>
+                                
+                                <a href="/tasks/<%= task._id %>" class="btn">
+                                    <i class="fas fa-eye"></i>
+                                    View Details
+                                </a>
+                                <button class="btn toggle-edit" data-task-id="<%= task._id %>">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>
+                            </div>
 
-            <div class="task pending" style="--index: 1">
-                <div class="task-priority high"></div>
-                <div class="task-header">
-                    <div class="task-title">Study for Physics Exam</div>
-                    <div class="task-time">
-                        <i class="fas fa-clock"></i>
-                        02:30 PM
-                    </div>
-                </div>
-                <div class="task-desc">
-                    Prepare for the upcoming physics exam covering thermodynamics and wave mechanics. Review lecture notes and practice problems.
-                </div>
-                <div class="task-status">
-                    <i class="fas fa-hourglass-half status-icon"></i>
-                    Pending
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 60%"></div>
-                </div>
-                <div class="task-actions">
-                    <a href="#" class="btn primary">
-                        <i class="fas fa-play"></i>
-                        Start Task
-                    </a>
-                    <a href="#" class="btn">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </a>
-                </div>
-            </div>
-
-            <div class="task missed" style="--index: 2">
-                <div class="task-priority"></div>
-                <div class="task-header">
-                    <div class="task-title">Submit Literature Essay</div>
-                    <div class="task-time">
-                        <i class="fas fa-clock"></i>
-                        11:59 PM
-                    </div>
-                </div>
-                <div class="task-desc">
-                    Write and submit the essay on Shakespeare's Hamlet. Analysis should focus on character development and themes.
-                </div>
-                <div class="task-status">
-                    <i class="fas fa-times-circle status-icon"></i>
-                    Missed
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 25%"></div>
-                </div>
-                <div class="task-actions">
-                    <a href="#" class="btn">
-                        <i class="fas fa-redo"></i>
-                        Reschedule
-                    </a>
-                    <a href="#" class="btn">
-                        <i class="fas fa-edit"></i>
-                        Edit
-                    </a>
-                </div>
-            </div>
-
-            <!-- Empty state example (hidden by default) -->
-            <div class="empty-state" style="display: none;">
-                <div class="empty-icon">
-                    <i class="fas fa-calendar-times"></i>
-                </div>
-                <h2>No Tasks Scheduled</h2>
-                <p>You have no tasks scheduled for this day. Enjoy your free time!</p>
-                <div style="margin-top: 2rem;">
-                    <a href="#" class="btn primary">
-                        <i class="fas fa-plus"></i>
-                        Add New Task
-                    </a>
-                </div>
-            </div>
+                            <form action="/tasks/<%= task._id %>?_method=PUT" method="POST" class="edit-form" id="edit-form-<%= task._id %>" style="display: none; margin-top: 1rem;">
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <input type="text" name="title" value="<%= task.title %>" placeholder="Title" required style="padding: 0.5rem; border-radius: 8px;">
+                                    <textarea name="description" placeholder="Description" required style="padding: 0.5rem; border-radius: 8px;"><%= task.description %></textarea>
+                                    <select name="status" required style="padding: 0.5rem; border-radius: 8px;">
+                                        <option value="pending" <%= task.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                                        <option value="completed" <%= task.status === 'completed' ? 'selected' : '' %>>Completed</option>
+                                        <option value="missed" <%= task.status === 'missed' ? 'selected' : '' %>>Missed</option>
+                                    </select>
+                                    <button type="submit" class="btn primary" style="align-self: flex-start;">
+                                        <i class="fas fa-save"></i> Save
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <% }) %>
+                            <% } %>
         </main>
     </div>
 
     <script>
         // Add smooth animations on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const tasks = document.querySelectorAll('.task');
-            
+
             tasks.forEach((task, index) => {
                 task.style.setProperty('--index', index);
             });
-
-            // Animate progress bars
-            setTimeout(() => {
-                const progressBars = document.querySelectorAll('.progress-fill');
-                progressBars.forEach(bar => {
-                    const width = bar.style.width;
-                    bar.style.width = '0%';
-                    setTimeout(() => {
-                        bar.style.width = width;
-                    }, 500);
-                });
-            }, 800);
         });
 
         // Add interactive hover effects
         document.querySelectorAll('.task').forEach(task => {
-            task.addEventListener('mouseenter', function() {
+            task.addEventListener('mouseenter', function () {
                 this.style.transform = 'translateY(-5px) scale(1.02)';
             });
-            
-            task.addEventListener('mouseleave', function() {
+
+            task.addEventListener('mouseleave', function () {
                 this.style.transform = 'translateY(0) scale(1)';
             });
         });
     </script>
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editButtons = document.querySelectorAll('.toggle-edit');
+
+            editButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const taskId = this.dataset.taskId;
+                    const form = document.getElementById(`edit-form-${taskId}`);
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                });
+            });
+
+            // Optional: Animate task entries
+            const tasks = document.querySelectorAll('.task');
+            tasks.forEach((task, index) => {
+                task.style.setProperty('--index', index);
+            });
+
+            // Interactive hover effects
+            document.querySelectorAll('.task').forEach(task => {
+                task.addEventListener('mouseenter', function () {
+                    this.style.transform = 'translateY(-5px) scale(1.02)';
+                });
+
+                task.addEventListener('mouseleave', function () {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
 </body>
+
 </html>
