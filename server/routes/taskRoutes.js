@@ -80,17 +80,15 @@ router.get('/', async (req, res) => {
 
 router.get('/calendar', async (req, res) => {
     try {
-        const userId = req.user._id;
+        let userId = req.user._id;
 
         // Fetch all tasks for the user
-        const tasks = await Task.find({ user: userId });
+        let tasks = await Task.find({ userId });
+
+        tasks = await updateMissedTasks(tasks) ;
 
         // Convert to date-string -> status[] mapping
-        const taskMap = {
-            "2025-07-01": [{ status: "completed" }],
-            "2025-07-02": [{ status: "pending" }],
-            "2025-07-03": [{ status: "missed" }]
-        };
+        const taskMap = {};
 
         tasks.forEach(task => {
             const dateKey = new Date(task.scheduledFor).toISOString().split('T')[0]; // YYYY-MM-DD
@@ -132,21 +130,14 @@ router.put('/:id', requireAuth, async (req, res) => {
 
         await task.save();
 
-        // Respond depending on context
-        const referer = req.get('Referer');
-        if (referer && referer.includes('/day/')) {
-            res.redirect('back');
-        } else {
-            res.redirect('/tasks');
-        }
+        const taskDate = new Date(task.scheduledFor).toISOString().split('T')[0];
+        res.redirect(`/tasks/day/${taskDate}`);
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');
     }
 });
 
-
-// DAILY TASK VIEW
 
 // DAILY TASK VIEW
 router.get('/day/:date', async (req, res) => {
