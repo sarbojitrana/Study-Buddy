@@ -276,6 +276,11 @@
             <p>Join us today and get started</p>
         </div>
 
+
+        <% if (typeof error !== 'undefined') { %>
+            <p style="color: #e53e3e; text-align: center; margin-bottom: 20px;"><%= error %></p>
+        <% } %>
+
         <form action="/auth/register" method="POST" id="registerForm">
             <div class="form-group">
                 <label for="username">Username</label>

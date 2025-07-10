@@ -1,22 +1,14 @@
 {
   "version": 2,
-  "builds": [
+  "public": true,
+  "rewrites": [
     {
-      "src": "server/app.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "client/views/**",
-          "client/public/**",
-          "client/styles/**"
-        ]
-      }
-    }
-  ],
-  "routes": [
+      "source": "/auth/:match*",
+      "destination": "https://study-buddy-backend-pkqc.onrender.com/auth/:match*"
+    },
     {
-      "src": "/(.*)",
-      "dest": "server/app.js"
+      "source": "/tasks/:match*",
+      "destination": "https://study-buddy-backend-pkqc.onrender.com/tasks/:match*"
     }
   ]
 }
